@@ -2,7 +2,7 @@
 django-microservices
 ====================
 Django-microservices helps you manage the development and interaction
-of microservices built in Django.
+of microservices built in Django. This port supports Django >=2.1 and Python >=3.7.
 
 --------
 Use Case
@@ -61,6 +61,10 @@ to the ``INSTALLED_APPS`` add the database settings::
             'PORT':     '5432',
         }
     }
+    
+TODO: fix import of view
+TODO: currently, you have to run makemigrations microservices - make them, add them
+TODO: make package install do the migrate as well
     
 Create database tables::
 
