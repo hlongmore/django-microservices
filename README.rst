@@ -63,7 +63,9 @@ to the ``INSTALLED_APPS`` add the database settings::
     }
     
 TODO: fix import of view
+
 TODO: currently, you have to run makemigrations microservices - make them, add them
+
 TODO: make package install do the migrate as well
     
 Create database tables::
