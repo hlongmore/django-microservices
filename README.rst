@@ -3,6 +3,8 @@ django-microservices
 ====================
 Django-microservices helps you manage the development and interaction
 of microservices built in Django. This fork supports Django >=2.1 and Python >=3.7.
+The original can be found at https://github.com/lander2k2/django-microservices
+
 
 --------
 Use Case
