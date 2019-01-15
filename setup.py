@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='django-microservices',
-      version='0.1',
+      version='0.2',
       description='A framework for building microservices with Django.',
       # This is a fork of https://github.com/lander2k2/django-microservices
       url='https://github.com/hlongmore/django-microservices',
