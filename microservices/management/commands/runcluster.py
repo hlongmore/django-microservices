@@ -52,7 +52,7 @@ class Command(BaseCommand):
 
         p = Process(target=run_this_server)
         p.start()
-        services = Service.objects.filter(local=True)
+        services = Service.objects.filter(local=True, active=True)
         svc_port = 8001
         for count, service in enumerate(services):
             print(f'Service {count}: {service.name}')
