@@ -64,7 +64,7 @@ class Command(BaseCommand):
         svc_port = 8001
         for count, service in enumerate(services):
             print(f'Service {count}: {service.name}')
-            service_url = '127.0.0.1:{}'.format(svc_port)
+            service_url = '127.0.0.1:{}'.format(svc_port) if not service.command_name else ''
             p = Process(
                 target=run_server,
                 args=(
