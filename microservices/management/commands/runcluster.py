@@ -45,6 +45,7 @@ def run_server(venv, manage_dir, url, settings, command_name):
             url,
             django_settings_file
         ]
+        args[:] = [a for a in args if a]
     except Exception as e:
         print(f'Unable to run {e}')
         return
@@ -90,6 +91,3 @@ class Command(BaseCommand):
                 self.stdout.write(
                     TermColor.OKGREEN + 'Started {0}'.format(service.name) + TermColor.ENDC
                 )
-            if settings.DEBUG:
-                timeout = 20 if not service.command_name else 500
-                p.join(timeout)
