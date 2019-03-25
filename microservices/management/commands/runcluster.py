@@ -76,10 +76,15 @@ class Command(BaseCommand):
                 )
             )
             p.start()
-            self.stdout.write(
-                TermColor.OKGREEN + 'Development server started at http://{0} for: {1}'.format(
-                    service.url, service.name) + TermColor.ENDC
-            )
-            service.url = service_url
-            service.save()
-            svc_port += 1
+            if not service.command_name or service.command_name == 'runserver':
+                self.stdout.write(
+                    TermColor.OKGREEN + 'Development server started at http://{0} for: {1}'.format(
+                        service.url, service.name) + TermColor.ENDC
+                )
+                service.url = service_url
+                service.save()
+                svc_port += 1
+            else:
+                self.stdout.write(
+                    TermColor.OKGREEN + 'Started {0}'.format(service.name) + TermColor.ENDC
+                )
