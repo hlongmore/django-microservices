@@ -1,7 +1,8 @@
-import os
+import multiprocessing as mp
 from multiprocessing import Process
 from subprocess import check_output
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 
@@ -55,7 +56,7 @@ def run_server(venv, manage_dir, url, settings, command_name):
 
 
 class Command(BaseCommand):
-    help = 'Runserver on all the services in the cluster'
+    help = 'Runserver or other command on all the services in the cluster'
 
     def handle(self, *args, **options):
         p = Process(target=run_this_server)
@@ -65,7 +66,8 @@ class Command(BaseCommand):
         for count, service in enumerate(services):
             print(f'Service {count}: {service.name}')
             service_url = '127.0.0.1:{}'.format(svc_port) if not service.command_name else ''
-            p = Process(
+            context = mp.get_context(service.start_method)
+            p = context.Process(
                 target=run_server,
                 args=(
                     service.virtual_env,
@@ -88,3 +90,6 @@ class Command(BaseCommand):
                 self.stdout.write(
                     TermColor.OKGREEN + 'Started {0}'.format(service.name) + TermColor.ENDC
                 )
+            if settings.DEBUG:
+                timeout = 20 if not service.command_name else 500
+                p.join(timeout)
