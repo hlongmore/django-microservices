@@ -18,38 +18,46 @@ class TermColor:
     UNDERLINE = '\033[4m'
 
 
+def run_this_server():
+    """Start development server for *this* project."""
+    call_command('runserver')
+
+
+def run_server(venv, manage_dir, url, settings, command_name):
+    """Start development server for *another* django project."""
+    if not venv:
+        venv = '/usr'
+    if not command_name:
+        command_name = 'runserver'
+    try:
+        py_command = f'{venv}/bin/python'
+        manage_command = 'manage.py'
+        settings = settings.strip('/')
+        if settings.endswith('.py'):
+            settings = settings[:-3]
+        settings = settings.replace('/', '.')
+        django_settings_file = f'--settings={settings}'
+        args = [
+            py_command,
+            manage_command,
+            command_name,
+            url,
+            django_settings_file
+        ]
+    except Exception as e:
+        print(f'Unable to run {e}')
+        return
+    try:
+        check_output(args, cwd=manage_dir)
+    except Exception as e:
+        command = ' '.join(args)
+        print(f'Unable to run {command}:\n{e}')
+
+
 class Command(BaseCommand):
     help = 'Runserver on all the services in the cluster'
 
     def handle(self, *args, **options):
-        def run_this_server():
-            """Start development server for *this* project."""
-            call_command('runserver')
-
-        def run_server(venv, manage_dir, url, settings):
-            """Start development server for *another* django project."""
-            if not venv:
-                venv = '/usr'
-            try:
-                py_command = f'{venv}/bin/python'
-                manage_command = 'manage.py'
-                settings = settings.strip('/')
-                if settings.endswith('.py'):
-                    settings = settings[:-3]
-                settings = settings.replace('/', '.')
-                django_settings_file = f'--settings={settings}'
-                args = [
-                    py_command,
-                    manage_command,
-                    'runserver',
-                    url,
-                    django_settings_file
-                ]
-                check_output(args, cwd=manage_dir)
-            except Exception as e:
-                command = ' '.join(args)
-                print(f'Unable to run {command}:\n{e}')
-
         p = Process(target=run_this_server)
         p.start()
         services = Service.objects.filter(local=True, active=True)
@@ -57,10 +65,16 @@ class Command(BaseCommand):
         for count, service in enumerate(services):
             print(f'Service {count}: {service.name}')
             service_url = '127.0.0.1:{}'.format(svc_port)
-            p = Process(target=run_server, args=(service.virtual_env,
-                                                 service.manage,
-                                                 service_url,
-                                                 service.settings))
+            p = Process(
+                target=run_server,
+                args=(
+                    service.virtual_env,
+                    service.manage,
+                    service_url,
+                    service.settings,
+                    service.command_name,
+                )
+            )
             p.start()
             self.stdout.write(
                 TermColor.OKGREEN + 'Development server started at http://{0} for: {1}'.format(

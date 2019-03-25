@@ -14,6 +14,8 @@ class Service(models.Model):
                                         "file is in")
     settings = models.CharField(max_length=256, unique=False,
                                 help_text="Relative path to the project's settings.py file")
+    command_name = models.CharField(max_length=256, null=True, blank=True,
+                                    help_text='manage.py command to run if not "runserver"')
     virtual_env = models.CharField(max_length=256, null=True, blank=True,
-                                   help_text="Ful path to the directory that your virtual "
+                                   help_text="Full path to the directory that your virtual "
                                              "environment's bin directory is in")
